@@ -23,13 +23,26 @@ namespace WebApplication3
             mailMessage.From = new MailAddress("tousifansari829@gmail.com");
             mailMessage.To.Add(TextBox1.Text);
             mailMessage.Subject = TextBox2.Text;
-            mailMessage.Body = TextBox3.Text;   
+            mailMessage.Body = TextBox3.Text;
 
-            if (FileUpload1.HasFile)
+            string[] recipients = TextBox1.Text.Split(',');
+            foreach (string recipient in recipients)
             {
-                string fileName = Path.GetFileName(FileUpload1.FileName);
-                string filePath = Path.Combine(Server.MapPath("Attachment"),fileName);
-                FileUpload1.SaveAs(filePath);
+                mailMessage.To.Add(recipient);
+            }
+
+            //if (FileUpload1.HasFile)
+            //{
+            //    string fileName = Path.GetFileName(FileUpload1.FileName);
+            //    string filePath = Path.Combine(Server.MapPath("Attachment"),fileName);
+            //    FileUpload1.SaveAs(filePath);
+            //    mailMessage.Attachments.Add(new Attachment(filePath));
+            //}
+
+            foreach (var postedFile in FileUpload1.PostedFiles) 
+            {
+                string filePath = Path.Combine(Server.MapPath("Attachment"), postedFile.FileName);
+                postedFile.SaveAs(filePath);
                 mailMessage.Attachments.Add(new Attachment(filePath));
             }
 
